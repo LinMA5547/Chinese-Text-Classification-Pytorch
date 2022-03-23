@@ -57,8 +57,9 @@ class Model(nn.Module):
         x = F.max_pool1d(x, x.size(2)).squeeze(2)
         return x
 
-    def forward(self, x):
+    def forward(self, x,delta=None):
         out = self.embedding(x[0])
+        if delta is not None:out += delta
         out = out.unsqueeze(1)
         out = torch.cat([self.conv_and_pool(out, conv) for conv in self.convs], 1)
         out = self.dropout(out)

@@ -30,7 +30,8 @@ def train(config, model, train_iter, dev_iter, test_iter):
     start_time = time.time()
     model.train()
     optimizer = torch.optim.Adam(model.parameters(), lr=config.learning_rate)
-
+    if config.adv == "Free":
+        model.opt = optimizer
     # 学习率指数衰减，每次epoch：学习率 = gamma * 学习率
     # scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.9)
     total_batch = 0  # 记录进行到多少batch
@@ -42,11 +43,15 @@ def train(config, model, train_iter, dev_iter, test_iter):
         print('Epoch [{}/{}]'.format(epoch + 1, config.num_epochs))
         # scheduler.step() # 学习率衰减
         for i, (trains, labels) in enumerate(train_iter):
-            outputs = model(trains)
-            model.zero_grad()
-            loss = F.cross_entropy(outputs, labels)
-            loss.backward()
-            optimizer.step()
+            if config.adv!='':
+                outputs = model(trains,labels)
+            else: outputs = model(trains)
+            if config.adv!='Free':
+                model.zero_grad()
+                loss = F.cross_entropy(outputs, labels)
+                loss.backward()
+                optimizer.step()
+            else: loss,outputs = outputs
             if total_batch % 100 == 0:
                 # 每多少轮输出在训练集和验证集上的效果
                 true = labels.data.cpu()
@@ -103,7 +108,9 @@ def evaluate(config, model, data_iter, test=False):
     labels_all = np.array([], dtype=int)
     with torch.no_grad():
         for texts, labels in data_iter:
-            outputs = model(texts)
+            if config.adv!='':
+                outputs = model(texts,labels)
+            else:outputs = model(texts)
             loss = F.cross_entropy(outputs, labels)
             loss_total += loss
             labels = labels.data.cpu().numpy()

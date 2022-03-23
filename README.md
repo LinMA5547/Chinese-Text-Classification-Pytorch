@@ -3,10 +3,13 @@
 
 中文文本分类，TextCNN，TextRNN，FastText，TextRCNN，BiLSTM_Attention, DPCNN, Transformer, 基于pytorch，开箱即用。
 
+update-20220323：新增FSGM、PGD、Free对抗训练；只在TextCNN上验证，具体见“效果-对抗训练”
+
 ## 介绍
 模型介绍、数据流动过程：[我的博客](https://zhuanlan.zhihu.com/p/73176084)  
 
 数据以字为单位输入模型，预训练词向量使用 [搜狗新闻 Word+Character 300d](https://github.com/Embedding/Chinese-Word-Vectors)，[点这里下载](https://pan.baidu.com/s/14k-9jsspp43ZhMxqPmsWMQ)  
+
 
 ## 环境
 python 3.7  
@@ -51,11 +54,25 @@ ERNIE|94.61%|比bert略差(说好的中文碾压bert呢)
 
 bert和ERNIE模型代码我放到另外一个仓库了，传送门：[Bert-Chinese-Text-Classification-Pytorch](https://github.com/649453932/Bert-Chinese-Text-Classification-Pytorch)，后续还会搞一些bert之后的东西，欢迎star。  
 
+## 效果-对抗训练
+模型|acc|备注
+--|--|--
+TextCNN-baseline|91.34%|复现的baseline
+TextCNN-FSGM|91.6%|FSGM对抗
+TextCNN-PGD|92.09%|PGD对抗
+TextCNN-Free|91.12%|Free对抗
 ## 使用说明
 ```
 # 训练并测试：
 # TextCNN
 python run.py --model TextCNN
+
+# TextCNN+FSGM
+python run.py --model TextCNN --adv FSGM
+
+# TextCNN+PGD --model TextCNN --adv PGD
+
+# TextCNN+Free --model TextCNN --adv Free --attack_iters 1 --alpha 0.1
 
 # TextRNN
 python run.py --model TextRNN
@@ -74,6 +91,8 @@ python run.py --model DPCNN
 
 # Transformer
 python run.py --model Transformer
+
+
 ```
 
 ### 参数

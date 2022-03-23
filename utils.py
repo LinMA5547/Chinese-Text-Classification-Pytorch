@@ -11,6 +11,15 @@ from datetime import timedelta
 MAX_VOCAB_SIZE = 10000  # 词表长度限制
 UNK, PAD = '<UNK>', '<PAD>'  # 未知字，padding符号
 
+def get_epsilon(embedding,eps):
+    mu = torch.mean(embedding,dim = 0).view(1,-1)
+    std = torch.std(embedding,dim = 0).view(1,-1)
+    max = torch.max(embedding,dim = 0)[0]
+    min = torch.min(embedding,dim = 0)[0]
+    upper_limit = (max.view(1,-1) - mu) / std
+    lower_limit = (min.view(1,-1) - mu) / std
+
+    return eps / std, lower_limit,upper_limit
 
 def build_vocab(file_path, tokenizer, max_size, min_freq):
     vocab_dic = {}
