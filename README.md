@@ -70,9 +70,11 @@ python run.py --model TextCNN
 # TextCNN+FSGM
 python run.py --model TextCNN --adv FSGM
 
-# TextCNN+PGD --model TextCNN --adv PGD
+# TextCNN+PGD
+python run.py --model TextCNN --adv PGD
 
-# TextCNN+Free --model TextCNN --adv Free --attack_iters 1 --alpha 0.1
+# TextCNN+Free
+python run.py --model TextCNN --adv Free --attack_iters 1 --alpha 0.1
 
 # TextRNN
 python run.py --model TextRNN
